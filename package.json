@@ -1,0 +1,26 @@
+{
+    "name": "st-example-app",
+    "version": "0.0.1",
+    "description": "An example app which integrates with Social Tables",
+    "main": "index.js",
+    "dependencies": {
+        "body-parser": "^1.15.2",
+        "cookie-session": "2.0.0-alpha.1",
+        "dotenv": "^2.0.0",
+        "express": "^4.14.0",
+        "ejs": "1.0.0",
+        "request": "2.34.0",
+        "request-promise": "4.0.2"
+    },
+    "devDependencies": {
+        "chai": "^3.5.0",
+        "chai-as-promised": "^5.3.0",
+        "mocha": "^2.2.5"
+    },
+    "scripts": {
+        "start": "node index.js",
+        "test": "mocha test"
+    },
+    "author": "Social Tables",
+    "license": "Apache-2.0"
+}

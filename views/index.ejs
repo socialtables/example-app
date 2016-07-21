@@ -1,0 +1,38 @@
+<html class="<%= user ? "authenticated" : "not-authenticated" %>">
+	<head>
+		<link rel="stylesheet" type="text/css" href="/base.css"/>
+		<% if (user) { %>
+			<script type="text/javascript" src="/index-on-login.js"></script>
+		<% } %>
+	</head>
+	<body>
+		<div class="main">
+			<div class="top">
+				<object id="st-logo" type="image/svg+xml" data="/st-icon.svg" height=200px;><img src="/st-icon.svg"/></object>
+				<h1>Socialtables Example App</h1>
+			</div>
+			<div class="content">
+				<% if (!user) { %>
+					<p>
+						You are not currently currently logged in.
+					</p>
+					<p>
+						<a href="/oauth/login-with-socialtables" class="btn call-to-action">Log in with Socialtables</a>
+					</p>
+				<% } else { %>
+					<p>
+						You are logged into Socialtables. Here's some information about who you are:
+					</p>
+					<div class="user-details">
+						<div><label>Name</label><span><%= user.name %></span></div>
+						<div><label>User ID</label><span><%= user.id %></span></div>
+						<div><label>Email Address</label><span><%= user.email %></span></div>
+					</div>
+					<p>
+						<a href="/logout" class="btn call-to-action">Logout</a>
+					</p>
+				<% } %>
+			</div>
+		</div>
+	</body>
+</html>
