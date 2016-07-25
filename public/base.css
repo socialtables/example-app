@@ -6,6 +6,9 @@ body {
 .authenticated body {
 	background-color: #cb5599;
 }
+.error body {
+	background-color: #E6615D;
+}
 .main {
 	max-width: 640px;
 	margin: 2em auto;
@@ -23,21 +26,23 @@ h1 {
 	margin-top: 2em;
 	text-align: center;
 }
-.content .user-details {
+.details {
 	text-align: left;
+	position: relative;
 }
-.content .user-details div {
+.details div {
 	margin: 0.5em 0;
 }
-.content .user-details label {
+.details label {
 	display: inline-block;
 	text-align: right;
-	min-width: 309px;
-	border-right: 2px solid rgba(255, 255, 255, 0.4);
+	width: 50%;
+	border-right: 1px solid rgba(255, 255, 255, 0.4);
 	padding-right: 10px;
 	margin-right: 10px;
+	margin-left: -11px;
 }
-.content .user-details span {
+.details span {
 	display: inline-block;
 	font-weight: lighter;
 }
@@ -57,4 +62,35 @@ h1 {
 }
 .authenticated .btn.call-to-action {
 	color: #cb5599;
+}
+.feature-examples {
+	width: 100%;
+	position: relative;
+	margin: 3em 0;
+}
+.feature-examples .col {
+	display: inline-block;
+	width: 50%;
+	position: relative;
+	text-align: center;
+}
+.feature-examples .col+.col {
+	margin-right: 0;
+	margin-left: -1px;
+	border-left: 1px solid rgba(255,255,255,0.5);
+}
+.feature-examples .disabled h3 {
+	text-decoration: line-through;
+}
+.feature-examples .disabled > * {
+	opacity: 0.5;
+}
+.feature-examples h4 {
+	margin-bottom: 0.5em;
+}
+.feature-examples .details {
+	font-size: 0.8em;
+}
+.feature-examples .details p {
+	text-align: center;
 }

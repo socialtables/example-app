@@ -1,26 +1,36 @@
 "use strict";
-require("dotenv").load();  // read .env, which is .gitignored
+require("dotenv").load();
+require("dotenv").load({path: "./.env-defaults"});
 
+var express = require("express");
 var bodyParser = require("body-parser");
 var cookieSession = require("cookie-session");
-var express = require("express");
 var request = require("request-promise");
 
+var featureExamples = require("./feature-examples");
+
 var config = {
-	socialtables_oauth_authorize_url: "http://localhost:2477/oauth/authorize",
-	socialtables_oauth_token_url: "http://localhost:2477/oauth/token",
-	socialtables_v3_api_host: "http://localhost:8737",
-	socialtables_app_id: process.env.SOCIALTABLES_APP_ID,
-	socialtables_app_secret: process.env.SOCIALTABLES_APP_SECRET,
-	oauth_redirect_url: "http://localhost:3000/oauth/redirect",
-	session_key: "secure"
+	socialtables_oauth_authorize_url: process.env.SOCIALTABLES_AUTH_HOST + "/oauth/authorize",
+	socialtables_oauth_token_url:     process.env.SOCIALTABLES_AUTH_HOST + "/oauth/token",
+	socialtables_v3_api_host:         process.env.SOCIALTABLES_V3_API_HOST,
+	socialtables_v4_api_host:         process.env.SOCIALTABLES_V4_API_HOST,
+	socialtables_app_id:              process.env.SOCIALTABLES_APP_ID,
+	socialtables_app_secret:          process.env.SOCIALTABLES_APP_SECRET,
+	oauth_redirect_url:               (process.env.APP_HOST || "http://localhost:3000") + "/oauth/redirect",
+	session_key: "secure",
+
+	// these MUST go away (as in be hidden behind a central API) before this is released.
+	socialtables_events_api_host:     process.env.SOCIALTABLES_EVENTS_API_HOST,
+	socialtables_guestlist_api_host:  process.env.SOCIALTABLES_GUESTLIST_API_HOST
 };
 
+// build app, basic middleware
 var app = express();
 app.use(express.static("public"));
 app.use(bodyParser.json());
 
-// configure dead-simple sessions
+// configure sessions in which we will store our OAuth bearer token;
+// this serves to eliminate the need for a datastore in this example
 app.set("trust proxy", 1);
 app.use(cookieSession({
   name: "session",
@@ -30,6 +40,55 @@ app.use(cookieSession({
 // configure templating engine
 app.set("views", "./views");
 app.set("view engine", "ejs");
+
+// apply middleware to set the current user based on their OAuth bearer token
+app.use(function(req, res, next) {
+
+	req.user = null;
+
+	// if the session contains a token, look it up
+	if (req.session.oauth_access_token) {
+
+		var authHeaders = {
+			Authorization: `Bearer ${req.session.oauth_access_token}`
+		};
+
+		// make a request for user details corresponding to the token
+		request({
+			method: "GET",
+			headers: authHeaders,
+			uri: `${config.socialtables_v4_api_host}/oauth/token`,
+			json: true
+		})
+		.then(function(tokenDetails) {
+
+			// look up the user object based on the ID we recieved
+			var userID = tokenDetails.id;
+			req.userID = tokenDetails.v3_id;
+			req.legacyUserID = tokenDetails.legacy_id;
+			return request({
+				method: "GET",
+				headers: authHeaders,
+				uri: `${config.socialtables_v4_api_host}/users/${userID}`,
+				json: true
+			});
+		})
+		.then(function(userDetails) {
+
+			// apply the user object to the request
+			req.user = userDetails;
+			next();
+		})
+		.catch(function(err) {
+			console.error("Error getting user details", err);
+			next();
+		});
+	}
+	// no token, no problem
+	else {
+		next();
+	}
+});
 
 /**
  * Initiates an OAuth authorization_code grant handshake with Social Tables
@@ -52,9 +111,8 @@ app.get("/oauth/redirect", function(req, res) {
 
 	// if the response indicated rejection, report the issue to the user
 	if (req.query.error || !req.query.code) {
-		var error_description = req.query.error_description || "authorization failed";
-		res.render("index", {
-			alert: error_description
+		res.render("error", {
+			error: req.query.error_description || "authorization failed"
 		});
 	}
 	// if we have an authorization_code, request an access_token from the API
@@ -83,13 +141,10 @@ app.get("/oauth/redirect", function(req, res) {
 					return res.redirect("/");
 				}
 			}
-			return res.render("index", {
-				alert: "failed to get an access token"
-			});
+			return res.render("error", { error: "failed to get an access token" });
 		})
 		.catch(function(err) {
-			console.error("unable to complete request to Socialtables API", err);
-			process.exit(1);
+			res.render("error", { error: "failed to get an access token" });
 		});
 	}
 });
@@ -103,54 +158,28 @@ app.get("/logout", function(req, res) {
 });
 
 /**
- * Landing page
+ * Landing page - displays user details if they are present
  */
 app.get("/", function (req, res) {
 
-	// if we're authenticated, use the API to display user details
-	var pageVars = {
-		user: null
-	};
-	var nextStep = Promise.resolve();
-	var oauthToken = req.session.oauth_access_token;
-	if (oauthToken) {
-
-		// look up the current OAuth bearer token's details
-		nextStep = request({
-			headers: {
-				Authorization: `Bearer ${oauthToken}`
-			},
-			method: "GET",
-			uri: `${config.socialtables_v3_api_host}/oauth/token`,
-			json: true
-		})
-		.then(function(tokenDetails) {
-
-			// using the user ID fetched from the token details endpoint,
-			// get the full user
-			var userID = tokenDetails.id;
-			return request({
-				headers: {
-					Authorization: `Bearer ${oauthToken}`
-				},
-				method: "GET",
-				uri: `${config.socialtables_v3_api_host}/users/${userID}`,
-				json: true
-			});
-		})
-		.then(function(userDetails) {
-			pageVars.user = userDetails;
-		})
-		.catch(function(err) {
-			console.error("unable to get user details", err);
-			process.exit();
-		});
+	// if the user is not logged in, simply render
+	if (!req.user) {
+		return res.render("index", { user: req.user, features: null });
 	}
-
-	// render the index page after the user request (or blank Promise) resolves.
-	nextStep.then(function() {
-		res.render("index", pageVars);
-	})
+	// otherwise, invoke feature examples and render
+	else {
+		return featureExamples
+			.invokeFeatureExamples(config, req)
+			.catch(err => {
+				return null;
+			})
+			.then(features => {
+				return res.render("index", {
+					user: req.user,
+					features: features
+				})
+			})
+	}
 });
 
 // start server

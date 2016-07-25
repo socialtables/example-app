@@ -1,0 +1,54 @@
+<div class="feature-examples">
+	<h2>API Usage Examples</h2>
+	<div class="col <%= features.access.venueMapper ? 'enabled' : 'disabled' %>">
+		<h3>Venue Mapper</h3>
+		<% if (features.access.venueMapper) { %>
+			<% if (features.error.tables) { %>
+				<p><%= features.error.tables %></p>
+			<% } %>
+			<% if (features.data.tables) { %>
+				<h4>Next Diagrammed Event:</h4>
+				<div class="details">
+					<div><label>Name</label><span><%= features.data.tables.name %></span></div>
+					<div><label>ID</label><span><%= features.data.tables.id %></span></div>
+					<div><label>Date</label><span><%= features.data.tables.startTime %></span></div>
+					<div><label>Table Count</label><span><%= features.data.tables.tableCount %></span></div>
+				</div>
+			<% } else { %>
+				<p>No upcoming events in VM3.</p>
+			<% } %>
+		<% } else { %>
+			<p>The user does not have access to Venue Mapper.</p>
+		<% } %>
+	</div><div class="col <%= features.access.guest ? 'enabled' : 'disabled' %>">
+		<h3>Guest</h3>
+		<% if (features.access.guest) { %>
+			<% if (features.error.guest) { %>
+				<p><%= features.error.guest %></p>
+			<% } %>
+				<h4>Next Event</h4>
+				<div class="details">
+					<% var nextEvent = features.data.guest.nextEvent; %>
+					<% if (nextEvent) { %>
+						<div><label>Name</label><span><%= nextEvent.name %></span></div>
+						<div><label>Guest Count</label><span><%= nextEvent.guestCount %></span></div>
+					<% } else { %>
+						<p>(no upcoming event)</p>
+					<% } %>
+				</div>
+				<h4>Other Upcoming Events</h4>
+				<div class="details">
+					<% if (features.data.guest.upcomingEvents.length < 2) { %>
+						<p>(no additional events)</p>
+					<% } %>
+					<ul>
+					<% features.data.guest.upcomingEvents.slice(1).forEach(function(event) { %>
+						<li><%= event.name %></li>
+					<% }) %>
+					</ul>
+				</div>
+		<% } else { %>
+			<p>The user does not have access to Guest.</p>
+		<% } %>
+	</div>
+</div>

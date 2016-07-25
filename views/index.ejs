@@ -1,9 +1,8 @@
 <html class="<%= user ? "authenticated" : "not-authenticated" %>">
 	<head>
+		<title>Socialtables Example App</title>
 		<link rel="stylesheet" type="text/css" href="/base.css"/>
-		<% if (user) { %>
-			<script type="text/javascript" src="/index-on-login.js"></script>
-		<% } %>
+		<script type="text/javascript" src="/index-on-login.js"></script>
 	</head>
 	<body>
 		<div class="main">
@@ -23,11 +22,12 @@
 					<p>
 						You are logged into Socialtables. Here's some information about who you are:
 					</p>
-					<div class="user-details">
+					<div class="details">
 						<div><label>Name</label><span><%= user.name %></span></div>
 						<div><label>User ID</label><span><%= user.id %></span></div>
 						<div><label>Email Address</label><span><%= user.email %></span></div>
 					</div>
+					<% include feature-examples %>
 					<p>
 						<a href="/logout" class="btn call-to-action">Logout</a>
 					</p>
