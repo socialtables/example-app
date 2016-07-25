@@ -2,7 +2,9 @@
 	<head>
 		<title>Socialtables Example App</title>
 		<link rel="stylesheet" type="text/css" href="/base.css"/>
-		<script type="text/javascript" src="/index-on-login.js"></script>
+		<% if (user) { %>
+			<script type="text/javascript" src="/index-on-login.js"></script>
+		<% } %>
 	</head>
 	<body>
 		<div class="main">
