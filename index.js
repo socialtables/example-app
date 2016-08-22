@@ -64,7 +64,7 @@ app.use(function(req, res, next) {
 
 			// look up the user object based on the ID we recieved
 			var userID = tokenDetails.id;
-			req.userID = tokenDetails.v3_id;
+			req.userID = tokenDetails.v4_id;
 			req.legacyUserID = tokenDetails.legacy_id;
 			return request({
 				method: "GET",
