@@ -10,13 +10,12 @@ var request = require("request-promise");
 var featureExamples = require("./feature-examples");
 
 var config = {
-	socialtables_oauth_authorize_url: process.env.SOCIALTABLES_AUTH_HOST + "/oauth/authorize",
-	socialtables_oauth_token_url:     process.env.SOCIALTABLES_AUTH_HOST + "/oauth/token",
-	socialtables_v3_api_host:         process.env.SOCIALTABLES_V3_API_HOST,
-	socialtables_v4_api_host:         process.env.SOCIALTABLES_V4_API_HOST,
+	socialtables_api_host:            process.env.SOCIALTABLES_API_HOST,
 	socialtables_app_id:              process.env.SOCIALTABLES_APP_ID,
 	socialtables_app_secret:          process.env.SOCIALTABLES_APP_SECRET,
-	oauth_redirect_url:               (process.env.APP_HOST || "http://localhost:3000") + "/oauth/redirect",
+	socialtables_oauth_authorize_url: process.env.SOCIALTABLES_AUTH_HOST + "/oauth/authorize",
+	socialtables_oauth_token_url:     process.env.SOCIALTABLES_AUTH_HOST + "/oauth/token",
+	oauth_redirect_url:               process.env.APP_HOST + "/oauth/redirect",
 	session_key: "secure",
 
 	// these MUST go away (as in be hidden behind a central API) before this is released.
@@ -57,7 +56,7 @@ app.use(function(req, res, next) {
 		request({
 			method: "GET",
 			headers: authHeaders,
-			uri: `${config.socialtables_v4_api_host}/oauth/token`,
+			uri: `${config.socialtables_api_host}/4.0/oauth/token`,
 			json: true
 		})
 		.then(function(tokenDetails) {
@@ -69,7 +68,7 @@ app.use(function(req, res, next) {
 			return request({
 				method: "GET",
 				headers: authHeaders,
-				uri: `${config.socialtables_v4_api_host}/users/${userID}`,
+				uri: `${config.socialtables_api_host}/4.0/users/${userID}`,
 				json: true
 			});
 		})

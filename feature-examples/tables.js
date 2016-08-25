@@ -29,7 +29,7 @@ function getNextEventWithTables(config, teamID, legacyUserID, oauthToken) {
 	return request({
 		method: "GET",
 		headers: authHeaders,
-		uri: `${config.socialtables_v3_api_host}/users/${legacyUserID}/events`,
+		uri: `${config.socialtables_api_host}/3.0/users/${legacyUserID}/events`,
 		qs: {
 			filter_from_date: new Date().toISOString(),
 			sort: "start_time:asc"
@@ -49,7 +49,7 @@ function getNextEventWithTables(config, teamID, legacyUserID, oauthToken) {
 			return request({
 				method: "GET",
 				headers: authHeaders,
-				uri: `${config.socialtables_v3_api_host}/teams/${teamID}/events/${event.id}/elements`,
+				uri: `${config.socialtables_api_host}/3.0/teams/${teamID}/events/${event.id}/elements`,
 				json: true
 			});
 		}

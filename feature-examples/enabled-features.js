@@ -31,7 +31,7 @@ function getEnabledFeatures(config, legacyUserID, oauthToken) {
 	return request({
 		method: "GET",
 		headers: authHeaders,
-		uri: `${config.socialtables_v3_api_host}/users/${legacyUserID}`,
+		uri: `${config.socialtables_api_host}/3.0/users/${legacyUserID}`,
 		json: true
 	})
 	.then(function (legacyUserResponse){
@@ -39,7 +39,7 @@ function getEnabledFeatures(config, legacyUserID, oauthToken) {
 		return request({
 			method: "GET",
 			headers: authHeaders,
-			uri: `${config.socialtables_v3_api_host}/teams/${legacyTeamID}/features`,
+			uri: `${config.socialtables_api_host}/3.0/teams/${legacyTeamID}/features`,
 			json: true
 		})
 	})
