@@ -67,6 +67,7 @@ function invokeFeatureExamples(config, req) {
 						result.data.guest = data;
 					})
 					.catch(err => {
+						console.log(err);
 						result.error.guest = err.message;
 					})
 				)
