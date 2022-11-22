@@ -28,7 +28,7 @@
 			<% } %>
 				<h4>Next Event</h4>
 				<div class="details">
-					<% var nextEvent = features.data.guest.nextEvent; %>
+					<% let nextEvent = features.data.guest.nextEvent; %>
 					<% if (nextEvent) { %>
 						<div><label>Name</label><span><%= nextEvent.name %></span></div>
 					<% } else { %>

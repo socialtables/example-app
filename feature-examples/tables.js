@@ -1,6 +1,6 @@
 "use strict";
-var request = require("request-promise");
-var moment = require("moment");
+let request = require("request-promise");
+let moment = require("moment");
 
 module.exports = getNextEventWithTables;
 
@@ -21,9 +21,9 @@ module.exports = getNextEventWithTables;
  */
 function getNextEventWithTables(config, teamID, legacyUserID, oauthToken) {
 
-	var authHeaders = { Authorization: `Bearer ${oauthToken}` };
-	var event = null;
-	var elements = [];
+	let authHeaders = { Authorization: `Bearer ${oauthToken}` };
+	let event = null;
+	let elements = [];
 
 	// get upcoming events via legacy API
 	return request({
@@ -38,7 +38,7 @@ function getNextEventWithTables(config, teamID, legacyUserID, oauthToken) {
 	})
 	// choose the first event from the list or leave it as null
 	.then(function(eventsResponseBody) {
-		var events = eventsResponseBody.data;
+		let events = eventsResponseBody.data;
 		if (events && events.length > 0) {
 			event = events[0];
 		}

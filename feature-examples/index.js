@@ -1,8 +1,8 @@
 "use strict";
 
-var getEnabledFeatures = require("./enabled-features").getEnabledFeatures;
-var getNextEventWithTables = require("./tables");
-var getUpcomingGuestEvents = require("./guestlists");
+let getEnabledFeatures = require("./enabled-features").getEnabledFeatures;
+let getNextEventWithTables = require("./tables");
+let getUpcomingGuestEvents = require("./guestlists");
 
 module.exports = { invokeFeatureExamples };
 
@@ -11,7 +11,7 @@ module.exports = { invokeFeatureExamples };
  */
 function invokeFeatureExamples(config, req) {
 
-	var result = {
+	let result = {
 		access: {},
 		data: {},
 		error: {}
@@ -35,11 +35,11 @@ function invokeFeatureExamples(config, req) {
 		// based on that, make subsequent queries
 		.then(enabledFeaturesResult => {
 
-			var teamID = enabledFeaturesResult.legacyTeamID;
-			var enabledFeatures = enabledFeaturesResult.enabledFeatures || {};
+			let teamID = enabledFeaturesResult.legacyTeamID;
+			let enabledFeatures = enabledFeaturesResult.enabledFeatures || {};
 			result.access = enabledFeatures;
 
-			var featureHandlers = [];
+			let featureHandlers = [];
 			if (enabledFeatures.venueMapper) {
 				featureHandlers.push(
 					getNextEventWithTables(

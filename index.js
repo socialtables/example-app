@@ -1,15 +1,15 @@
 "use strict";
-require("dotenv").load();
-require("dotenv").load({path: "./.env-defaults"});
+const {join} = require('path');
+require('dotenv').config({path: join(__dirname, '.env-defaults')});
 
-var express = require("express");
-var bodyParser = require("body-parser");
-var cookieSession = require("cookie-session");
-var request = require("request-promise");
+let express = require("express");
+let bodyParser = require("body-parser");
+let cookieSession = require("cookie-session");
+let request = require("request-promise");
 
-var featureExamples = require("./feature-examples");
+let featureExamples = require("./feature-examples");
 
-var config = {
+let config = {
 	socialtables_oauth_authorize_url: process.env.SOCIALTABLES_AUTH_HOST + "/oauth/authorize",
 	socialtables_oauth_token_url:     process.env.SOCIALTABLES_AUTH_HOST + "/oauth/token",
 	socialtables_api_host:            process.env.SOCIALTABLES_API_HOST,
@@ -20,7 +20,7 @@ var config = {
 };
 
 // build app, basic middleware
-var app = express();
+let app = express();
 app.use(express.static("public"));
 app.use(bodyParser.json());
 
@@ -44,7 +44,7 @@ app.use(function(req, res, next) {
 	// if the session contains a token, look it up
 	if (req.session.oauth_access_token) {
 
-		var authHeaders = {
+		let authHeaders = {
 			Authorization: `Bearer ${req.session.oauth_access_token}`
 		};
 
@@ -58,7 +58,7 @@ app.use(function(req, res, next) {
 		.then(function(tokenDetails) {
 
 			// look up the user object based on the ID we recieved
-			var userID = tokenDetails.id;
+			let userID = tokenDetails.id;
 			req.userID = tokenDetails.v4_id;
 			req.legacyUserID = tokenDetails.legacy_id;
 			return request({
@@ -90,7 +90,7 @@ app.use(function(req, res, next) {
  */
 app.get("/oauth/login-with-socialtables", function(req, res) {
 
-	var oauthAuthorizeURL = config.socialtables_oauth_authorize_url +
+	let oauthAuthorizeURL = config.socialtables_oauth_authorize_url +
 		"?client_id=" + encodeURIComponent(config.socialtables_app_id) +
 		"&redirect_uri=" + encodeURIComponent(config.oauth_redirect_url) +
 		"&grant_type=authorization_code" +
@@ -112,7 +112,7 @@ app.get("/oauth/redirect", function(req, res) {
 	}
 	// if we have an authorization_code, request an access_token from the API
 	else {
-		var authorization_code = req.query.code;
+		let authorization_code = req.query.code;
 		request({
 			method: "POST",
 			uri: config.socialtables_oauth_token_url,
@@ -179,5 +179,5 @@ app.get("/", function (req, res) {
 
 // start server
 app.listen(3000, function () {
-  console.log("Socialtables example app listening on port 3000.");
+  console.log("Social Tables example app listening on port 3000.");
 });

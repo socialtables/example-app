@@ -1,5 +1,5 @@
 "use strict";
-var request = require("request-promise");
+let request = require("request-promise");
 
 module.exports = { getEnabledFeatures };
 
@@ -25,8 +25,8 @@ module.exports = { getEnabledFeatures };
  */
 function getEnabledFeatures(config, legacyUserID, oauthToken) {
 
-	var authHeaders = { Authorization: `Bearer ${oauthToken}` };
-	var legacyTeamID = null;
+	let authHeaders = { Authorization: `Bearer ${oauthToken}` };
+	let legacyTeamID = null;
 
 	return request({
 		method: "GET",
@@ -44,10 +44,10 @@ function getEnabledFeatures(config, legacyUserID, oauthToken) {
 		})
 	})
 	.then(function (featureFlagMapResponse) {
-		var vm3Feature = featureFlagMapResponse.data["venue-mapper-3"];
-		var am3Feature = featureFlagMapResponse.data["attendee-manager-3"];
-		var now = new Date();
-		var enabledFeatures = {
+		let vm3Feature = featureFlagMapResponse.data["venue-mapper-3"];
+		let am3Feature = featureFlagMapResponse.data["attendee-manager-3"];
+		let now = new Date();
+		let enabledFeatures = {
 			guest: false,
 			venueMapper: false
 		};

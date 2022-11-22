@@ -1,6 +1,6 @@
 "use strict";
-var request = require("request-promise");
-var moment = require("moment");
+let request = require("request-promise");
+let moment = require("moment");
 
 module.exports = getUpcomingGuestlist;
 
@@ -15,10 +15,10 @@ module.exports = getUpcomingGuestlist;
  */
 function getUpcomingGuestlist(config, userID, oauthToken) {
 
-	var authHeaders = { Authorization: `Bearer ${oauthToken}` };
-	var now = moment();
-	var upcomingEvents = [];
-	var nextEvent = null;
+	let authHeaders = { Authorization: `Bearer ${oauthToken}` };
+	let now = moment();
+	let upcomingEvents = [];
+	let nextEvent = null;
 
 	// get all events for the current user
 	return request({
