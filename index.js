@@ -1,5 +1,6 @@
 "use strict";
 const {join} = require('path');
+require('dotenv').config({path: join(__dirname, '.env')});
 require('dotenv').config({path: join(__dirname, '.env-defaults')});
 
 let express = require("express");
