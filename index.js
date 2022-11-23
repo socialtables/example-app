@@ -10,6 +10,11 @@ let request = require("request-promise");
 
 let featureExamples = require("./feature-examples");
 
+if (process.env.SOCIALTABLES_APP_ID == '' || process.env.SOCIALTABLES_APP_SECRET == '') {
+	console.log('Please set environment variable for SOCIALTABLES_APP_ID and SOCIALTABLES_APP_SECRET\n\n')
+	process.exit(1);
+}
+
 let config = {
 	socialtables_oauth_authorize_url: process.env.SOCIALTABLES_AUTH_HOST + "/oauth/authorize",
 	socialtables_oauth_token_url:     process.env.SOCIALTABLES_AUTH_HOST + "/oauth/token",
